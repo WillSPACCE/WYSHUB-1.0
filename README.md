@@ -112,7 +112,7 @@ SystemWM/
 - Em máquinas sem GPU dedicada, a seção de GPU pode aparecer vazia ou não existir.
 - O projeto usa `LibreHardwareMonitorLib` para leitura de sensores e o `netsh` para regras do firewall.
 
-## 🌐 Página bonita do projeto
+## 🌐 DOCUMENTAÇÃO 
 
 A documentação visual está em `docs/index.html` e pode ser publicada com GitHub Pages.
 
