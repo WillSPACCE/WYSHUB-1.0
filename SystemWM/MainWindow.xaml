@@ -1,0 +1,95 @@
+<Window x:Class="SystemWM.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        Title="SystemWM - Diagnóstico de Visitas Técnicas" Height="760" Width="1280"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        Background="{StaticResource BgPrincipal}"
+        MinHeight="620" MinWidth="980">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="6"/>
+    </WindowChrome.WindowChrome>
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="44"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Background="#10172A" BorderBrush="{StaticResource BorderCard}" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Border x:Name="TitleBarHitArea" Grid.Column="0" Background="Transparent" MouseEnter="TitleBarHitArea_MouseEnter" MouseLeave="TitleBarHitArea_MouseLeave">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
+                        <TextBlock Text="SystemWM" FontSize="16" FontWeight="Bold" Foreground="{StaticResource AzulDestaque}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel x:Name="WindowButtons" Grid.Column="1" Orientation="Horizontal" Margin="0,0,10,0" Opacity="1" VerticalAlignment="Center">
+                    <Button x:Name="BtnMinimize" Width="34" Height="34" Margin="0,0,6,0"
+                            Content="—" Style="{StaticResource BotaoSecundario}" Click="BtnMinimize_Click"/>
+                    <Button x:Name="BtnMaximize" Width="34" Height="34" Margin="0,0,6,0"
+                            Content="▢" Style="{StaticResource BotaoSecundario}" Click="BtnMaximize_Click"/>
+                    <Button x:Name="BtnClose" Width="34" Height="34"
+                            Content="✕" Style="{StaticResource BotaoSecundario}" Click="BtnClose_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border x:Name="SidebarPanel" Grid.Row="1" Grid.Column="0" Background="{StaticResource BgSidebar}" BorderBrush="{StaticResource BorderCard}" BorderThickness="0,0,1,0" ClipToBounds="True">
+            <Border.RenderTransform>
+                <TranslateTransform x:Name="SidebarTranslate" X="0"/>
+            </Border.RenderTransform>
+            <DockPanel LastChildFill="True" Margin="0,20,0,20">
+                <StackPanel DockPanel.Dock="Top">
+                    <StackPanel Orientation="Horizontal" Margin="20,0,0,20">
+                        <Button x:Name="BtnMenuToggle" Content="✕" Width="38" Height="38" Margin="0,0,10,0"
+                                Style="{StaticResource BotaoSecundario}" Click="BtnMenuToggle_Click"/>
+                        <TextBlock Text="SystemWM" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AzulDestaque}" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <RadioButton x:Name="RbDashboard" Style="{StaticResource ItemMenu}" GroupName="Menu" IsChecked="True"
+                                 Content="🏠  Dashboard" Margin="12,2" Checked="Menu_Checked"/>
+                    <RadioButton x:Name="RbHardware" Style="{StaticResource ItemMenu}" GroupName="Menu"
+                                 Content="🖥️  Hardware" Margin="12,2" Checked="Menu_Checked"/>
+                    <RadioButton x:Name="RbFirewall" Style="{StaticResource ItemMenu}" GroupName="Menu"
+                                 Content="🛡️  Firewall" Margin="12,2" Checked="Menu_Checked"/>
+                    <RadioButton x:Name="RbManutencao" Style="{StaticResource ItemMenu}" GroupName="Menu"
+                                 Content="🧹  Manutenção" Margin="12,2" Checked="Menu_Checked"/>
+                    <RadioButton x:Name="RbRelatorios" Style="{StaticResource ItemMenu}" GroupName="Menu"
+                                 Content="📄  Relatórios" Margin="12,2" Checked="Menu_Checked"/>
+                    <RadioButton x:Name="RbConfiguracoes" Style="{StaticResource ItemMenu}" GroupName="Menu"
+                                 Content="⚙️  Configurações" Margin="12,2" Checked="Menu_Checked"/>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Bottom" Margin="20,0,0,0">
+                    <TextBlock Text="SystemWM v1.0.0" Style="{StaticResource LabelSecundario}"/>
+                    <TextBlock Text="Ferramenta para visitas técnicas" Style="{StaticResource LabelSecundario}"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="1" Grid.Column="1" Margin="30">
+            <Button x:Name="BtnMenuHamburger" HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Width="42" Height="42" Margin="0,0,0,10"
+                    Content="☰" Style="{StaticResource BotaoSecundario}" Click="BtnMenuToggle_Click"/>
+            <ContentControl x:Name="ConteudoPrincipal" Margin="0,55,0,0" Opacity="0"
+                            RenderTransformOrigin="0.5,0.5">
+                <ContentControl.RenderTransform>
+                    <ScaleTransform x:Name="ContentScale" ScaleX="1" ScaleY="1"/>
+                </ContentControl.RenderTransform>
+            </ContentControl>
+        </Grid>
+    </Grid>
+</Window>

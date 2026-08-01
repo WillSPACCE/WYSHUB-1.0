@@ -1,0 +1,39 @@
+<UserControl x:Class="SystemWM.Views.ReportsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,20">
+            <TextBlock Text="Relatórios" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextoPrimario}"/>
+            <TextBlock Text="Gere e envie o relatório da visita técnica por e-mail" Style="{StaticResource LabelSecundario}"/>
+        </StackPanel>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel MaxWidth="700">
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="Dados do cliente / visita" Style="{StaticResource TituloCard}" Margin="0,0,0,10"/>
+
+                        <TextBlock Text="Nome do cliente" Style="{StaticResource LabelSecundario}"/>
+                        <TextBox x:Name="TxtNomeCliente" Margin="0,4,0,10"/>
+
+                        <TextBlock Text="Empresa (opcional)" Style="{StaticResource LabelSecundario}"/>
+                        <TextBox x:Name="TxtEmpresa" Margin="0,4,0,10"/>
+
+                        <TextBlock Text="E-mail de destino" Style="{StaticResource LabelSecundario}"/>
+                        <TextBox x:Name="TxtEmailDestino" Margin="0,4,0,10"/>
+
+                        <TextBlock Text="Observações da visita" Style="{StaticResource LabelSecundario}"/>
+                        <TextBox x:Name="TxtObservacoes" Margin="0,4,0,0" Height="70" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                    <Button x:Name="BtnGerar" Content="📄 Gerar relatório" Style="{StaticResource BotaoSecundario}" Margin="0,0,10,0" Click="BtnGerar_Click"/>
+                    <Button x:Name="BtnEnviar" Content="✉ Enviar por e-mail" Style="{StaticResource BotaoPrimario}" Click="BtnEnviar_Click"/>
+                </StackPanel>
+
+                <TextBlock x:Name="TxtStatus" Style="{StaticResource LabelSecundario}" TextWrapping="Wrap"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

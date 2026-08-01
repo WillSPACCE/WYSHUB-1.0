@@ -1,0 +1,69 @@
+<UserControl x:Class="SystemWM.Views.MaintenanceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,20">
+            <TextBlock Text="Manutenção" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextoPrimario}"/>
+            <TextBlock Text="Limpeza de arquivos e programas instalados" Style="{StaticResource LabelSecundario}"/>
+        </StackPanel>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Limpeza -->
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Limpeza básica" Style="{StaticResource TituloCard}" Margin="0,0,0,10"/>
+                    <Button DockPanel.Dock="Bottom" x:Name="BtnLimpar" Content="🧹 Limpar selecionados" Style="{StaticResource BotaoPrimario}" Margin="0,14,0,0" Click="BtnLimpar_Click"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="ListaLimpeza">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{StaticResource BorderCard}" BorderThickness="0,0,0,1" Padding="0,10">
+                                        <StackPanel Orientation="Horizontal">
+                                            <CheckBox IsChecked="{Binding Selecionado, Mode=TwoWay}" VerticalAlignment="Top" Margin="0,2,10,0"/>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Nome}" Foreground="{StaticResource TextoPrimario}" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding Descricao}" Style="{StaticResource LabelSecundario}" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding TamanhoEstimadoMB, StringFormat='~{0} MB'}" Style="{StaticResource LabelSecundario}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+
+            <!-- Programas instalados -->
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Programas instalados" Style="{StaticResource TituloCard}" Margin="0,0,0,10"/>
+                    <TextBlock DockPanel.Dock="Top" x:Name="TxtQtdProgramas" Style="{StaticResource LabelSecundario}" Margin="0,0,0,10"/>
+                    <TextBox DockPanel.Dock="Top" x:Name="TxtFiltro" Margin="0,0,0,10" ToolTip="Filtrar por nome" TextChanged="TxtFiltro_TextChanged"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="ListaProgramas">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{StaticResource BorderCard}" BorderThickness="0,0,0,1" Padding="0,8">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Nome}" Foreground="{StaticResource TextoPrimario}"/>
+                                            <TextBlock Style="{StaticResource LabelSecundario}">
+                                                <Run Text="{Binding Fabricante}"/> <Run Text=" • v"/><Run Text="{Binding Versao}"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+</UserControl>
