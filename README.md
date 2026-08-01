@@ -1,13 +1,41 @@
-# SystemWM — Ferramenta de Visitas Técnicas
+# SystemWM
 
-App desktop (Windows) para uso em visitas técnicas: coleta diagnóstico completo da máquina do cliente
-(CPU, RAM, SSD/HD, GPU, sistema), gerencia o Firewall do Windows, faz limpeza básica de arquivos,
-lista programas instalados e gera/envia um relatório por e-mail via **Resend**.
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Windows%2010%2F11-0078D7?style=for-the-badge&logo=microsoft" alt="Windows" />
+  <img src="https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet" alt=".NET 8" />
+  <img src="https://img.shields.io/badge/WPF-Desktop%20App-6C63FF?style=for-the-badge" alt="WPF" />
+</p>
 
-## Requisitos para compilar
-- Windows 10/11
-- Visual Studio 2022 (com a carga de trabalho ".NET Desktop Development") **ou** .NET SDK 8.0 + linha de comando
-- Conexão com a internet na primeira vez (para baixar os pacotes NuGet: `LibreHardwareMonitorLib`, `System.Management`, `System.Net.Http.Json`)
+Sistema desktop para suporte técnico e visitas de campo. Ele coleta diagnóstico completo do cliente,
+controla o firewall do Windows, executa limpezas rápidas, lista programas instalados e gera relatórios
+prontos para envio por e-mail usando o serviço do Resend.
+
+## ✨ O que ele faz
+
+- Diagnóstico de hardware com foco em CPU, RAM, SSD/HD, GPU e rede.
+- Leitura de temperatura, uso, carga e sensores de hardware.
+- Ativação/desativação do Firewall do Windows e gerenciamento de regras.
+- Limpeza de arquivos temporários, cache do Windows, prefetch e lixeira.
+- Listagem de programas instalados para auditoria de máquina.
+- Geração de relatório em HTML com dados da visita.
+- Envio do relatório por e-mail via API do Resend.
+
+## 🧭 Telas do sistema
+
+- Dashboard: visão geral rápida da máquina e do diagnóstico.
+- Hardware: informações detalhadas de hardware e sensores.
+- Firewall: status do firewall, regras e alteração de portas.
+- Manutenção: limpeza de arquivos e inventário de programas.
+- Relatórios: geração do arquivo final com layout de visita.
+- Configurações: API key do Resend e dados do técnico.
+
+## ⚙️ Requisitos para rodar
+
+- Windows 10 ou 11
+- Visual Studio 2022 com a carga de trabalho .NET Desktop Development
+- Ou .NET SDK 8.0 + terminal
+- Permissão de Administrador para algumas funções do sistema
+- Conta no Resend para envio de e-mail
 
 ## Como abrir e rodar (modo desenvolvimento)
 1. Abra `SystemWM.sln` no Visual Studio.
@@ -78,12 +106,18 @@ SystemWM/
   Documentos\SystemWM\Relatorios) e envia por e-mail via Resend.
 - **Configurações**: API Key do Resend, remetente, e-mail padrão, nome do técnico.
 
-## Observações importantes
-- O app **precisa rodar como Administrador** (já configurado para pedir isso automaticamente)
-  para: ler temperatura/fans (drivers de hardware), alterar o Firewall, e limpar pastas do sistema.
-- Em notebooks/desktops sem GPU dedicada (só vídeo integrado sem sensores), a seção de GPU
-  simplesmente não aparece — isso é esperado.
-- Antivírus podem, às vezes, alertar sobre softwares de monitoramento de hardware (o próprio
-  LibreHardwareMonitor instala um driver de kernel temporário para ler sensores). Isso é normal
-  e o mesmo comportamento do HWMonitor/HWiNFO.
-- Para editar as cores/visual, tudo está centralizado em `Themes/DarkTheme.xaml`.
+## 📝 Observações importantes
+
+- Algumas funções exigem privilégios administrativos do Windows.
+- Em máquinas sem GPU dedicada, a seção de GPU pode aparecer vazia ou não existir.
+- O projeto usa `LibreHardwareMonitorLib` para leitura de sensores e o `netsh` para regras do firewall.
+
+## 🌐 Página bonita do projeto
+
+A documentação visual está em `docs/index.html` e pode ser publicada com GitHub Pages.
+
+## 🚀 Próximos passos
+
+- Versionar o projeto em GitHub.
+- Criar releases com builds estáveis.
+- Adicionar screenshots e uma demo de uso.
