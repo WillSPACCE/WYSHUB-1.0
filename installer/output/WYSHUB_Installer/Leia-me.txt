@@ -1,0 +1,8 @@
+WYSHUB
+
+Aplicativo desktop para suporte técnico e visitas de campo.
+
+Instalação:
+1. Copie a pasta para o computador do cliente.
+2. Execute WYSHUB.exe.
+3. O app solicitará permissão de Administrador, o que é necessário para algumas funções.
