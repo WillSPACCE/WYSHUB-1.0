@@ -17,25 +17,6 @@
                     <TextBlock x:Name="TxtStatusCompartilhamento" Text="" Style="{StaticResource LabelSecundario}" TextWrapping="Wrap" Margin="0,0,0,0" TextAlignment="Center" Foreground="{StaticResource TextoPrimario}" FontSize="13"/>
                 </StackPanel>
             </Border>
-            <Border Style="{StaticResource CardStyle}" Width="720" Height="200" Margin="0,0,0,24">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="24">
-                    <TextBlock Text="Ferramenta futura 2" FontWeight="SemiBold" Foreground="{StaticResource TextoPrimario}" TextAlignment="Center" TextWrapping="Wrap" FontSize="18" Margin="0,0,0,12"/>
-                    <TextBlock Text="Você poderá expandir essa área com utilitários independentes." Style="{StaticResource LabelSecundario}" TextWrapping="Wrap" Margin="0,0,0,0" TextAlignment="Center" FontSize="14"/>
-                </StackPanel>
-            </Border>
-        </StackPanel>
-
-        <StackPanel MaxWidth="640" HorizontalAlignment="Left">
-            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,0">
-                <StackPanel>
-                    <TextBlock Text="Próximas ações" Style="{StaticResource TituloCard}" Margin="0,0,0,10"/>
-                    <TextBlock Text="- Adicionar utilitários de limpeza avançada" Style="{StaticResource LabelSecundario}" Margin="0,0,0,0"/>
-                    <TextBlock Text="- Incluir diagnósticos rápidos de disco e rede" Style="{StaticResource LabelSecundario}" Margin="0,0,0,0"/>
-                    <TextBlock Text="- Manter essas funções fora do relatório principal" Style="{StaticResource LabelSecundario}" Margin="0,0,0,0"/>
-                </StackPanel>
-            </Border>
-            <Button Content="Nova função" Style="{StaticResource BotaoPrimario}" Width="180" Height="42" IsEnabled="False"/>
-            <TextBlock Text="Funcionalidades serão adicionadas aqui conforme o tempo." Style="{StaticResource LabelSecundario}" Margin="0,8,0,0"/>
         </StackPanel>
     </DockPanel>
 </UserControl>

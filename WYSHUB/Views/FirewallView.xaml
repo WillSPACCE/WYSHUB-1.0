@@ -1,6 +1,36 @@
 <UserControl x:Class="SystemWM.Views.FirewallView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="FiltroDirecaoToggle" TargetType="ToggleButton">
+            <Setter Property="Foreground" Value="#E2E8F0"/>
+            <Setter Property="Background" Value="#111827"/>
+            <Setter Property="BorderBrush" Value="#334155"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Bd" CornerRadius="999" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#2563EB"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#60A5FA"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1D4ED8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
     <DockPanel>
         <Grid DockPanel.Dock="Top" Margin="0,0,0,20">
             <Grid.ColumnDefinitions>
@@ -26,12 +56,19 @@
                     <Button Content="Remover regra por porta" Style="{StaticResource BotaoSecundario}" Foreground="#F8FAFC" Click="BtnRemoverRegraPorPorta_Click" Width="180"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,16" VerticalAlignment="Center">
                     <TextBox x:Name="TxtPortaRapida" Width="100" Margin="0,0,8,0" ToolTip="Informe a porta" Foreground="{StaticResource TextoPrimario}" Background="{StaticResource BgCard}"/>
-                    <ComboBox x:Name="CmbDirecao" Width="140" Margin="0,0,8,0" SelectedIndex="0" Foreground="#F8FAFC" Background="#5B8DEF" BorderBrush="#4C7BE8" BorderThickness="1">
-                        <ComboBoxItem Content="Saída" Foreground="#0F172A" Background="#5B8DEF"/>
-                        <ComboBoxItem Content="Entrada" Foreground="#0F172A" Background="#5B8DEF"/>
-                        <ComboBoxItem Content="Ambos" Foreground="#0F172A" Background="#5B8DEF"/>
+                    <Border CornerRadius="999" Background="#111827" BorderBrush="#24314D" BorderThickness="1" Padding="4" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <ToggleButton x:Name="BtnFiltroSaida" Content="Saída" Width="90" Height="34" Margin="0,0,4,0" Style="{StaticResource FiltroDirecaoToggle}" Click="BtnFiltroDirecao_Click" Tag="Saída" IsChecked="True"/>
+                            <ToggleButton x:Name="BtnFiltroEntrada" Content="Entrada" Width="90" Height="34" Margin="0,0,4,0" Style="{StaticResource FiltroDirecaoToggle}" Click="BtnFiltroDirecao_Click" Tag="Entrada"/>
+                            <ToggleButton x:Name="BtnFiltroAmbos" Content="Ambos" Width="90" Height="34" Style="{StaticResource FiltroDirecaoToggle}" Click="BtnFiltroDirecao_Click" Tag="Ambos"/>
+                        </StackPanel>
+                    </Border>
+                    <ComboBox x:Name="CmbDirecao" Width="0" Height="0" Visibility="Collapsed" SelectedIndex="0">
+                        <ComboBoxItem Content="Saída"/>
+                        <ComboBoxItem Content="Entrada"/>
+                        <ComboBoxItem Content="Ambos"/>
                     </ComboBox>
                     <Button Content="Liberar porta" Style="{StaticResource BotaoPrimario}" Foreground="#F8FAFC" Click="BtnLiberarPortaRapida_Click" Width="140" Margin="0,0,8,0"/>
                     <Button Content="Liberar executável" Style="{StaticResource BotaoSecundario}" Foreground="#F8FAFC" Click="BtnLiberarExecutavel_Click" Width="160"/>

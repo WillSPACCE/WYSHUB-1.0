@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -22,6 +24,7 @@ namespace SystemWM.Views
             var s = AppState.Settings.Carregar();
             TxtApiKey.Password = s.ResendApiKey;
             TxtApiKeyVisivel.Text = s.ResendApiKey;
+            CarregarBackupConfig(s);
             AtualizarStatusApi(null, "Sem validação");
         }
 
@@ -46,6 +49,142 @@ namespace SystemWM.Views
             }
 
             TxtStatus.Text = mensagem;
+        }
+
+        private void CarregarBackupConfig(AppSettings settings)
+        {
+            TxtBackupPastaSelecionada.Text = string.IsNullOrWhiteSpace(settings.PastaBackupLimpeza)
+                ? "Nenhuma pasta de backup selecionada"
+                : settings.PastaBackupLimpeza;
+
+            ChkLimparAutomaticamenteBackup.IsChecked = settings.LimparAutomaticamentePastaBackup;
+            AtualizarEstadoRetencaoBackup();
+
+            ChkUsarPastaBackup.IsChecked = settings.UsarBackupLimpeza;
+            BtnSelecionarPastaBackupSettings.IsEnabled = settings.UsarBackupLimpeza;
+            AtualizarBotaoBackupCorSettings();
+
+            switch (settings.DiasRetencaoPastaBackup)
+            {
+                case 60:
+                    RbRetencao60.IsChecked = true;
+                    break;
+                case 90:
+                    RbRetencao90.IsChecked = true;
+                    break;
+                default:
+                    RbRetencao30.IsChecked = true;
+                    break;
+            }
+        }
+
+        private void ChkLimparAutomaticamenteBackup_Checked(object sender, RoutedEventArgs e)
+        {
+            AtualizarEstadoRetencaoBackup();
+        }
+
+        private void AtualizarEstadoRetencaoBackup()
+        {
+            var habilitado = ChkLimparAutomaticamenteBackup.IsChecked == true;
+            RbRetencao30.IsEnabled = habilitado;
+            RbRetencao60.IsEnabled = habilitado;
+            RbRetencao90.IsEnabled = habilitado;
+        }
+
+        private void AtualizarBotaoBackupCorSettings()
+        {
+            if (BtnSelecionarPastaBackupSettings == null)
+                return;
+
+            if (BtnSelecionarPastaBackupSettings.IsEnabled)
+            {
+                BtnSelecionarPastaBackupSettings.Background = new SolidColorBrush(Color.FromRgb(34, 197, 94));
+                BtnSelecionarPastaBackupSettings.Foreground = Brushes.White;
+            }
+            else
+            {
+                BtnSelecionarPastaBackupSettings.Background = new SolidColorBrush(Color.FromRgb(75, 85, 99));
+                BtnSelecionarPastaBackupSettings.Foreground = Brushes.White;
+            }
+        }
+
+        private void ChkUsarPastaBackup_Changed(object sender, RoutedEventArgs e)
+        {
+            var habilitado = ChkUsarPastaBackup.IsChecked == true;
+            BtnSelecionarPastaBackupSettings.IsEnabled = habilitado;
+            AtualizarBotaoBackupCorSettings();
+
+            try
+            {
+                var settings = AppState.Settings.Carregar();
+                settings.UsarBackupLimpeza = habilitado;
+                AppState.Settings.Salvar(settings);
+            }
+            catch { }
+        }
+
+        private void BtnSelecionarPastaBackupSettings_Click(object sender, RoutedEventArgs e)
+        {
+            using var dialog = new System.Windows.Forms.FolderBrowserDialog
+            {
+                Description = "Selecionar pasta de backup para arquivos limpos",
+                ShowNewFolderButton = true
+            };
+
+            if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                return;
+
+            try
+            {
+                var settings = AppState.Settings.Carregar();
+                settings.PastaBackupLimpeza = dialog.SelectedPath;
+                settings.UsarBackupLimpeza = true;
+                AppState.Settings.Salvar(settings);
+                ChkUsarPastaBackup.IsChecked = true;
+                BtnSelecionarPastaBackupSettings.IsEnabled = true;
+                TxtBackupPastaSelecionada.Text = dialog.SelectedPath;
+                AtualizarBotaoBackupCorSettings();
+            }
+            catch
+            {
+                MessageBox.Show("Não foi possível salvar a pasta de backup.", "SystemWM", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void BtnRestaurarBackup_Click(object sender, RoutedEventArgs e)
+        {
+            var settings = AppState.Settings.Carregar();
+            if (string.IsNullOrWhiteSpace(settings.PastaBackupLimpeza) || !Directory.Exists(settings.PastaBackupLimpeza))
+            {
+                MessageBox.Show("Nenhuma pasta de backup válida foi encontrada para restaurar.", "SystemWM", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var dlg = new RestoreConfirmDialog { Owner = Window.GetWindow(this) };
+            var resultado = dlg.ShowDialog();
+            if (resultado != true)
+                return;
+
+            try
+            {
+                var backupDir = settings.PastaBackupLimpeza;
+                var arquivos = Directory.GetFiles(backupDir, "*", SearchOption.AllDirectories);
+                foreach (var arquivo in arquivos)
+                {
+                    var destino = arquivo.Replace(backupDir, AppDomain.CurrentDomain.BaseDirectory);
+                    var destinoDir = Path.GetDirectoryName(destino);
+                    if (!string.IsNullOrWhiteSpace(destinoDir))
+                        Directory.CreateDirectory(destinoDir);
+
+                    File.Copy(arquivo, destino, true);
+                }
+
+                MessageBox.Show("Backup restaurado com sucesso.", "SystemWM", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao restaurar backup: {ex.Message}", "SystemWM", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private static bool ValorEhInvalido(string? valor)

@@ -1,161 +1,438 @@
 # COMANDOS DO PROJETO — SYSTEMWM / WYSHUB
 
-> Sempre rode esses comandos com o terminal aberto na pasta do projeto:
-> ```powershell
-> cd "C:\Users\willy\OneDrive\Documentos\WYSHUB\WYSHUB"
-> ```
+> Projeto: SystemWM / WYSHUB
+> Ambiente: C# / .NET / Windows / Git
+> Regra principal: **sempre abra o terminal dentro da pasta do projeto**
+
+```powershell
+cd "C:\Users\willy\OneDrive\Documentos\WYSHUB\WYSHUB"
+```
 
 ---
 
-## 🔴 FLUXO DO DIA A DIA (use sempre nessa ordem)
+# 🔥 ROTINA DIÁRIA (CASA OU TRABALHO)
 
-Sempre que terminar uma mudança que funcionou, siga esses 3 passos:
+## 1) Ao começar a trabalhar no projeto
+
+Primeiro sempre baixe as últimas alterações do repositório:
 
 ```powershell
-# 1) Testar se compila sem erro
-dotnet build
-
-# 2) Se compilou certo, salvar no Git (seu "ponto de restauração" de verdade)
-git add .
-git commit -m "descreva aqui o que voce mudou"
-
-# 3) Gerar o executável atualizado (opcional, só quando quiser testar o .exe final)
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
+git pull
 ```
 
-⚠️ **Regra de ouro:** só faça `git commit` depois que `dotnet build` funcionar sem erro.
-Nunca commite código quebrado — assim você sempre tem um ponto seguro para voltar.
+Isso garante que você está usando a versão mais atual.
 
----
+Depois confira se está tudo limpo:
 
-## 🟢 GIT — controle de versão (evita o problema que você teve)
-
-### Configuração inicial (fazer só 1 vez, se ainda não tiver repositório)
-```powershell
-git init
-git add .
-git commit -m "Primeiro commit - app funcionando"
-```
-
-### Ver o que foi mudado antes de commitar
 ```powershell
 git status
-git diff
 ```
 
-### Salvar mudanças (fazer sempre que uma alteração funcionar)
-```powershell
-git add .
-git commit -m "descreva o que voce mudou, ex: trocar icone dark/light"
+Se aparecer:
+
+```
+nothing to commit, working tree clean
 ```
 
-### Ver histórico de commits
-```powershell
-git log --oneline
-```
-
-### 🆘 Voltar para um commit anterior (se algo quebrar de novo)
-```powershell
-# Ver a lista de commits e copiar o código (hash) do que quer voltar
-git log --oneline
-
-# Voltar TUDO para aquele ponto (descarta mudanças não commitadas)
-git reset --hard <hash_do_commit>
-```
-
-### Criar um "checkpoint" rápido sem descrever nada (uso emergencial)
-```powershell
-git add .
-git commit -m "checkpoint antes de mexer no icone"
-```
+Está tudo certo.
 
 ---
 
-## 🔵 BUILD, RUN E TESTES
+# 🟢 COMEÇANDO UMA ALTERAÇÃO GRANDE
 
-### Restaurar pacotes (dependências do projeto)
+Antes de mexer em coisas importantes:
+
+Exemplo:
+
+* mudar interface
+* mexer em XAML
+* trocar sistema de tema
+* alterar estrutura do programa
+* mexer no instalador
+
+Faça um ponto seguro:
+
 ```powershell
-dotnet restore
+git add .
+git commit -m "checkpoint antes de alterar interface"
 ```
-O que faz: baixa e instala as dependências do projeto.
 
-### Compilar a solução (só verifica se está tudo certo)
+Agora você tem uma versão para voltar se algo quebrar.
+
+---
+
+# 🔵 CICLO NORMAL DE DESENVOLVIMENTO
+
+Sempre siga essa ordem:
+
+## 1) Fazer alteração no código
+
+↓
+
+## 2) Testar
+
 ```powershell
-dotnet build SystemWM.sln
+dotnet build
 ```
-O que faz: verifica se o código está correto e gera o binário para testar.
 
-### Limpar build antigo (quando algo estranho não muda mesmo depois de editar)
-```powershell
-dotnet clean SystemWM.sln
-```
-O que faz: remove os arquivos temporários gerados pela compilação. Use isso se corrigir um bug e o erro continuar aparecendo igual.
+Se aparecer erro, corrija antes de salvar.
 
-### Rodar o programa em modo de desenvolvimento
+↓
+
+## 3) Executar para testar
+
 ```powershell
 dotnet run --project SystemWM\SystemWM.csproj
 ```
-O que faz: inicia o aplicativo localmente para testar.
 
-⚠️ **Este projeto precisa de permissão de administrador.** Se aparecer erro 740, abra o PowerShell **como Administrador** e rode o comando de novo.
+↓
 
-### Rodar o .exe gerado diretamente
+## 4) Se funcionou, salvar no Git
+
 ```powershell
-.\bin\Debug\net8.0-windows\win-x64\WYSHUB.exe
+git add .
+git commit -m "descrição da alteração"
+```
+
+Exemplos:
+
+```powershell
+git commit -m "corrigido menu lateral"
+```
+
+```powershell
+git commit -m "adicionado modo dark"
+```
+
+```powershell
+git commit -m "ajustado sistema de icones"
 ```
 
 ---
 
-## 🟣 PUBLICAR EXECUTÁVEL FINAL (para usar em outra máquina)
+# 🌎 TRABALHAR EM DOIS COMPUTADORES
+
+## Quando chegar no trabalho:
+
+```powershell
+git pull
+```
+
+Trabalhe normalmente.
+
+Quando terminar:
+
+```powershell
+git add .
+git commit -m "alterações feitas no trabalho"
+git push
+```
+
+---
+
+## Quando chegar em casa:
+
+Antes de abrir o projeto:
+
+```powershell
+git pull
+```
+
+Continue de onde parou.
+
+Quando terminar:
+
+```powershell
+git add .
+git commit -m "alterações feitas em casa"
+git push
+```
+
+---
+
+# 📌 REGRA IMPORTANTE DO GIT
+
+Nunca saia de um computador sem enviar suas alterações:
+
+Sempre faça:
+
+```powershell
+git add .
+git commit -m "salvando progresso"
+git push
+```
+
+Assim o outro computador sempre consegue continuar.
+
+---
+
+# 🟣 COMANDOS DO GIT
+
+## Ver alterações
+
+```powershell
+git status
+```
+
+Mostra arquivos modificados.
+
+---
+
+## Ver exatamente o que mudou
+
+```powershell
+git diff
+```
+
+Mostra linha por linha o que foi alterado.
+
+---
+
+## Salvar mudanças
+
+```powershell
+git add .
+git commit -m "mensagem"
+```
+
+Cria um ponto de restauração.
+
+---
+
+## Enviar para o servidor
+
+```powershell
+git push
+```
+
+Manda suas alterações para o repositório.
+
+---
+
+## Baixar alterações
+
+```powershell
+git pull
+```
+
+Pega alterações feitas em outro computador.
+
+---
+
+## Ver histórico
+
+```powershell
+git log --oneline
+```
+
+Mostra todos os pontos salvos.
+
+---
+
+# 🆘 SE ALGUMA COISA QUEBRAR
+
+Veja os últimos commits:
+
+```powershell
+git log --oneline
+```
+
+Copie o código do commit desejado.
+
+Volte:
+
+```powershell
+git reset --hard HASH_DO_COMMIT
+```
+
+Exemplo:
+
+```powershell
+git reset --hard a82f91c
+```
+
+O projeto volta exatamente para aquele estado.
+
+---
+
+# 🟡 BUILD E TESTES
+
+## Baixar dependências
+
+Use quando baixar o projeto em outro computador:
+
+```powershell
+dotnet restore
+```
+
+---
+
+## Verificar erros de compilação
+
+```powershell
+dotnet build SystemWM.sln
+```
+
+---
+
+## Limpar arquivos temporários
+
+Quando algo parece estar usando uma versão antiga:
+
+```powershell
+dotnet clean SystemWM.sln
+```
+
+Depois:
+
+```powershell
+dotnet build
+```
+
+---
+
+## Executar programa
+
+```powershell
+dotnet run --project SystemWM\SystemWM.csproj
+```
+
+---
+
+# 🟠 GERAR EXE FINAL
+
+Quando quiser criar a versão para usar em outro PC:
 
 ```powershell
 dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
 ```
-O que faz: gera um arquivo `.exe` único, pronto para usar em outra máquina Windows (não precisa ter o .NET instalado).
+
+Resultado:
+
+* gera o executável final
+* não precisa instalar .NET em outro Windows
+* pronto para distribuição
 
 ---
 
-## ⚪ UTILITÁRIOS / INFORMAÇÃO
+# 🔧 QUANDO CLONAR O PROJETO EM UM PC NOVO
 
-### Ver estrutura de pastas do projeto
+Primeira vez:
+
 ```powershell
-dir SystemWM
+git clone LINK_DO_REPOSITORIO
 ```
-Mostra as pastas do projeto (Models, Services, Views, Themes, etc).
 
-### Ver versão do .NET instalada
+Entrar na pasta:
+
 ```powershell
-dotnet --info
+cd WYSHUB
 ```
 
-### Abrir a solução no Visual Studio
+Baixar dependências:
+
+```powershell
+dotnet restore
 ```
-SystemWM.sln
+
+Abrir no VS Code:
+
+```powershell
+code .
 ```
-Abre o projeto visualmente — você pode testar apertando **F5**.
 
 ---
 
-## 📌 DICAS IMPORTANTES
+# ⚠️ QUANDO USAR POWERSHELL COMO ADMINISTRADOR
 
-- Para testar rapidamente, prefira abrir a solução no Visual Studio e apertar **F5**.
-- Se for pelo terminal, abra o PowerShell **como Administrador** antes de rodar comandos que envolvam permissões do Windows.
-- Algumas funções do app precisam do programa rodando como Administrador.
-- O ícone do programa e o botão do topo da janela já estão conectados ao site:
-  https://willspacce.netlify.app/
-- Sempre que for mexer em algo arriscado (ícones, temas, recursos XAML), faça um `git commit` ANTES de começar. Assim, se quebrar, você volta com `git reset --hard`.
+Abra como administrador quando:
+
+* o programa mexer com configurações do Windows
+* aparecer erro 740
+* precisar acessar recursos protegidos
 
 ---
 
-## ⚡ RESUMO RÁPIDO
+# 🧪 TESTE RÁPIDO ANTES DE ENVIAR
 
-| Comando | O que faz |
-|---|---|
-| `dotnet restore` | baixar dependências |
-| `dotnet build` | compilar / verificar erros |
-| `dotnet clean` | limpar build antigo (cache) |
-| `dotnet run --project SystemWM\SystemWM.csproj` | executar em modo dev |
-| `dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true` | gerar .exe final |
-| `git add . && git commit -m "msg"` | salvar progresso |
-| `git log --oneline` | ver histórico |
-| `git reset --hard <hash>` | voltar a um ponto salvo |
+Antes do commit:
+
+```powershell
+dotnet clean
+dotnet restore
+dotnet build
+dotnet run --project SystemWM\SystemWM.csproj
+```
+
+Se tudo funcionar:
+
+```powershell
+git add .
+git commit -m "versão funcionando"
+git push
+```
+
+---
+
+# 🚀 ROTINA PERFEITA DO PROJETO
+
+## Chegou no PC:
+
+```powershell
+git pull
+```
+
+## Trabalhou:
+
+Editar → Testar → Corrigir
+
+## Funcionou:
+
+```powershell
+git add .
+git commit -m "descrição"
+git push
+```
+
+## Antes de sair:
+
+```powershell
+git status
+```
+
+Se estiver limpo, pode desligar.
+
+---
+
+# RESUMO DOS COMANDOS
+
+| Comando             | Função                  |
+| ------------------- | ----------------------- |
+| `git pull`          | baixar alterações       |
+| `git add .`         | preparar arquivos       |
+| `git commit -m ""`  | criar ponto salvo       |
+| `git push`          | enviar para repositório |
+| `git status`        | ver situação atual      |
+| `git diff`          | ver mudanças            |
+| `git log --oneline` | histórico               |
+| `git reset --hard`  | voltar versão           |
+| `dotnet restore`    | instalar dependências   |
+| `dotnet build`      | testar compilação       |
+| `dotnet run`        | executar programa       |
+| `dotnet publish`    | criar EXE final         |
+
+---
+
+## REGRA FINAL
+
+**Git salva seu código.**
+
+**Build testa seu código.**
+
+**Run executa seu código.**
+
+**Publish cria o programa final.**
+
+Sempre mantenha este ciclo:
+
+`EDITAR → TESTAR → COMMIT → PUSH → CONTINUAR`

@@ -36,7 +36,6 @@ namespace SystemWM.Views
                 TxtCorpoEmail.Text = s.EmailCorpoPadrao;
                 TxtNomeTecnico.Text = s.NomeTecnico;
 
-                CarregarBackupConfig(s);
                 CarregarLaudosSalvos();
                 PrepararRelatorioParaEmail();
             }
@@ -83,16 +82,15 @@ namespace SystemWM.Views
         {
             if (!string.IsNullOrWhiteSpace(AppState.UltimoRelatorioTxtGerado))
             {
-                TxtCorpoEmail.Text = AppState.UltimoRelatorioTxtGerado;
                 TxtRelatorioSelecionado.Text = string.IsNullOrWhiteSpace(AppState.UltimoRelatorioNomeAnexo)
-                    ? "Relatório carregado para envio por e-mail."
+                    ? "Relatório pronto para anexo. Você pode escrever a mensagem abaixo."
                     : $"Anexo pronto: {AppState.UltimoRelatorioNomeAnexo}";
                 if (!string.IsNullOrWhiteSpace(AppState.UltimoRelatorioTipo))
                 {
                     var tipo = AppState.UltimoRelatorioTipo.ToUpperInvariant();
                     TxtRelatorioSelecionado.Text = $"Anexo pronto ({tipo}): {AppState.UltimoRelatorioNomeAnexo}";
                 }
-                TxtStatus.Text = "Relatório gerado carregado na composição do e-mail.";
+                TxtStatus.Text = "Relatório preparado para anexo. A mensagem abaixo permanece livre para edição.";
             }
         }
 
@@ -210,107 +208,6 @@ namespace SystemWM.Views
             }
         }
 
-        private void CarregarBackupConfig(AppSettings settings)
-        {
-            TxtBackupPastaSelecionada.Text = string.IsNullOrWhiteSpace(settings.PastaBackupLimpeza)
-                ? "Nenhuma pasta de backup selecionada"
-                : settings.PastaBackupLimpeza;
-
-            ChkLimparAutomaticamenteBackup.IsChecked = settings.LimparAutomaticamentePastaBackup;
-            AtualizarEstadoRetencaoBackup();
-
-            // Backup selection controls
-            ChkUsarPastaBackup.IsChecked = settings.UsarBackupLimpeza;
-            BtnSelecionarPastaBackupSettings.IsEnabled = settings.UsarBackupLimpeza;
-            AtualizarBotaoBackupCorSettings();
-
-            switch (settings.DiasRetencaoPastaBackup)
-            {
-                case 60:
-                    RbRetencao60.IsChecked = true;
-                    break;
-                case 90:
-                    RbRetencao90.IsChecked = true;
-                    break;
-                default:
-                    RbRetencao30.IsChecked = true;
-                    break;
-            }
-        }
-
-        private void ChkLimparAutomaticamenteBackup_Checked(object sender, RoutedEventArgs e)
-        {
-            AtualizarEstadoRetencaoBackup();
-        }
-
-        private void AtualizarEstadoRetencaoBackup()
-        {
-            var habilitado = ChkLimparAutomaticamenteBackup.IsChecked == true;
-            RbRetencao30.IsEnabled = habilitado;
-            RbRetencao60.IsEnabled = habilitado;
-            RbRetencao90.IsEnabled = habilitado;
-        }
-
-        private void AtualizarBotaoBackupCorSettings()
-        {
-            if (BtnSelecionarPastaBackupSettings == null)
-                return;
-
-            if (BtnSelecionarPastaBackupSettings.IsEnabled)
-            {
-                BtnSelecionarPastaBackupSettings.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(34, 197, 94));
-                BtnSelecionarPastaBackupSettings.Foreground = System.Windows.Media.Brushes.White;
-            }
-            else
-            {
-                BtnSelecionarPastaBackupSettings.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(75, 85, 99));
-                BtnSelecionarPastaBackupSettings.Foreground = System.Windows.Media.Brushes.White;
-            }
-        }
-
-        private void ChkUsarPastaBackup_Changed(object sender, RoutedEventArgs e)
-        {
-            var habilitado = ChkUsarPastaBackup.IsChecked == true;
-            BtnSelecionarPastaBackupSettings.IsEnabled = habilitado;
-            AtualizarBotaoBackupCorSettings();
-
-            try
-            {
-                var settings = AppState.Settings.Carregar();
-                settings.UsarBackupLimpeza = habilitado;
-                AppState.Settings.Salvar(settings);
-            }
-            catch { }
-        }
-
-        private void BtnSelecionarPastaBackupSettings_Click(object sender, RoutedEventArgs e)
-        {
-            using var dialog = new System.Windows.Forms.FolderBrowserDialog
-            {
-                Description = "Selecionar pasta de backup para arquivos limpos",
-                ShowNewFolderButton = true
-            };
-
-            if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
-                return;
-
-            try
-            {
-                var settings = AppState.Settings.Carregar();
-                settings.PastaBackupLimpeza = dialog.SelectedPath;
-                settings.UsarBackupLimpeza = true;
-                AppState.Settings.Salvar(settings);
-                ChkUsarPastaBackup.IsChecked = true;
-                BtnSelecionarPastaBackupSettings.IsEnabled = true;
-                TxtBackupPastaSelecionada.Text = dialog.SelectedPath;
-                AtualizarBotaoBackupCorSettings();
-            }
-            catch
-            {
-                MessageBox.Show("Não foi possível salvar a pasta de backup.", "SystemWM", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }
-
         private void MenuAbrirArquivo_Click(object sender, RoutedEventArgs e)
         {
             if (((MenuItem)sender).DataContext is not LaudoItem laudo)
@@ -350,10 +247,12 @@ namespace SystemWM.Views
             }
 
             var conteudo = File.ReadAllText(caminho);
-            TxtCorpoEmail.Text = conteudo;
+            AppState.UltimoRelatorioTxtGerado = conteudo;
             AppState.UltimoRelatorioCaminho = caminho;
             AppState.UltimoRelatorioNomeAnexo = laudo.Nome;
-            TxtStatus.Text = $"Relatório carregado: {caminho}";
+            AppState.UltimoRelatorioTipo = laudo.Tipo;
+            TxtRelatorioSelecionado.Text = $"Selecionado para anexo: {laudo.Nome}";
+            TxtStatus.Text = $"Relatório preparado para anexo: {caminho}";
         }
 
         private async void BtnTestarEnvio_Click(object sender, RoutedEventArgs e)
@@ -423,7 +322,9 @@ namespace SystemWM.Views
                 relatorio: string.Empty);
 
             var anexos = new List<(string Nome, byte[] Conteudo)>();
-            var relatorioTxt = !string.IsNullOrWhiteSpace(AppState.UltimoRelatorioTxtGerado) ? AppState.UltimoRelatorioTxtGerado : TxtCorpoEmail.Text;
+            var relatorioTxt = !string.IsNullOrWhiteSpace(AppState.UltimoRelatorioTxtGerado)
+                ? AppState.UltimoRelatorioTxtGerado
+                : string.Empty;
 
             if (ChkAnexarTxt.IsChecked == true)
             {
@@ -507,33 +408,6 @@ namespace SystemWM.Views
             return html.ToString();
         }
 
-        private void BtnRestaurarBackup_Click(object sender, RoutedEventArgs e)
-        {
-            var settings = AppState.Settings.Carregar();
-            if (string.IsNullOrWhiteSpace(settings.PastaBackupLimpeza) || !Directory.Exists(settings.PastaBackupLimpeza))
-            {
-                MessageBox.Show("Nenhuma pasta de backup válida foi encontrada para restaurar.", "SystemWM", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            var dlg = new RestoreConfirmDialog { Owner = Window.GetWindow(this) };
-            var resultado = dlg.ShowDialog();
-            if (resultado != true)
-                return;
-
-            var service = new CleanupService();
-            var restaurado = service.RestaurarBackup(settings.PastaBackupLimpeza);
-            if (restaurado)
-            {
-                TxtStatus.Text = "Arquivos do backup restaurados para suas pastas originais.";
-                MessageBox.Show("Backup restaurado com sucesso.", "SystemWM", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                TxtStatus.Text = "Nenhum arquivo encontrado para restaurar na pasta de backup.";
-                MessageBox.Show("Nenhum arquivo encontrado para restaurar.", "SystemWM", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-        }
-
         private void BtnSalvar_Click(object sender, RoutedEventArgs e)
         {
             var s = AppState.Settings.Carregar();
@@ -542,8 +416,6 @@ namespace SystemWM.Views
             s.EmailAssuntoPadrao = string.IsNullOrWhiteSpace(TxtAssuntoEmail.Text) ? "Relatório de Visita Técnica - {cliente}" : TxtAssuntoEmail.Text;
             s.EmailCorpoPadrao = string.IsNullOrWhiteSpace(TxtCorpoEmail.Text) ? "Olá {cliente},\n\nSegue o relatório da visita técnica em anexo.\n\nAtenciosamente,\n{tecnico}" : TxtCorpoEmail.Text;
             s.NomeTecnico = TxtNomeTecnico.Text;
-            s.LimparAutomaticamentePastaBackup = ChkLimparAutomaticamenteBackup.IsChecked == true;
-            s.DiasRetencaoPastaBackup = RbRetencao60.IsChecked == true ? 60 : RbRetencao90.IsChecked == true ? 90 : 30;
 
             AppState.Settings.Salvar(s);
             TxtStatus.Text = "Configurações salvas com sucesso.";
@@ -557,25 +429,20 @@ namespace SystemWM.Views
             TxtRemetente.Text = string.Empty;
             TxtNomeTecnico.Text = string.Empty;
             TxtCorpoEmail.Text = string.Empty;
-            TxtAssuntoEmail.Text = string.Empty;
-            TxtCorpoEmail.Text = string.Empty;
-            TxtDestinoPadrao.Text = string.Empty;
-            TxtCopiaEmail.Text = string.Empty;
-            TxtRemetente.Text = string.Empty;
-            TxtNomeTecnico.Text = string.Empty;
-            TxtRelatorioSelecionado.Text = "Nenhum relatório carregado.";
-            _caminhoRelatorioAtual = null;
-            ListaLaudosSalvos.SelectedItem = null;
-            TxtStatus.Text = "Campos limpos. Você pode começar uma nova composição.";
+
+            TxtStatus.Text = "Mensagem limpa. O relatório anexado permanece disponível para envio.";
         }
 
         private void BtnLimparRelatorio_Click(object sender, RoutedEventArgs e)
         {
-            TxtCorpoEmail.Text = string.Empty;
-            TxtRelatorioSelecionado.Text = "Nenhum relatório carregado.";
+            AppState.UltimoRelatorioCaminho = null;
+            AppState.UltimoRelatorioNomeAnexo = null;
+            AppState.UltimoRelatorioTipo = null;
+            AppState.UltimoRelatorioTxtGerado = null;
             _caminhoRelatorioAtual = null;
             ListaLaudosSalvos.SelectedItem = null;
-            TxtStatus.Text = "Conteúdo do relatório removido do corpo do e-mail.";
+            TxtRelatorioSelecionado.Text = "Nenhum relatório carregado.";
+            TxtStatus.Text = "Relatório removido do anexo. A mensagem continua disponível.";
         }
 
         private void BtnAbrirPastaRelatorios_Click(object sender, RoutedEventArgs e)

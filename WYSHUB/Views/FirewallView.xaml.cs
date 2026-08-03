@@ -7,6 +7,7 @@ using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using SystemWM.Models;
 
@@ -178,6 +179,36 @@ namespace SystemWM.Views
             await CarregarAsync();
         }
 
+        private void BtnFiltroDirecao_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not ToggleButton toggleButton)
+                return;
+
+            var direcao = toggleButton.Tag?.ToString();
+            if (string.IsNullOrWhiteSpace(direcao))
+                return;
+
+            foreach (var button in new[] { BtnFiltroSaida, BtnFiltroEntrada, BtnFiltroAmbos })
+            {
+                if (button != null && button != toggleButton)
+                    button.IsChecked = false;
+            }
+
+            toggleButton.IsChecked = true;
+
+            if (CmbDirecao != null)
+            {
+                foreach (ComboBoxItem item in CmbDirecao.Items)
+                {
+                    if (string.Equals(item.Content?.ToString(), direcao, StringComparison.OrdinalIgnoreCase))
+                    {
+                        CmbDirecao.SelectedItem = item;
+                        break;
+                    }
+                }
+            }
+        }
+
         private async void BtnLiberarPortaRapida_Click(object sender, RoutedEventArgs e)
         {
             if (!int.TryParse(TxtPortaRapida.Text, out int porta))
@@ -209,6 +240,7 @@ namespace SystemWM.Views
             {
                 MessageBox.Show("Porta liberada com sucesso.", "SystemWM");
                 await CarregarAsync();
+                await AtualizarPortasAtivasAsync();
             }
             else
             {
@@ -356,7 +388,7 @@ namespace SystemWM.Views
             {
                 ListaPortasAtivas.ItemsSource = null;
                 var portas = await Task.Run(() => AppState.Firewall.ListarPortasAtivas());
-                _portasOriginais = portas;
+                _portasOriginais = MesclarPortasLiberadas(portas);
                 SincronizarPortasRelatorio(_portasOriginais);
                 ListaPortasAtivas.ItemsSource = _portasOriginais;
                 AtualizarPortasRelatorioLista();
@@ -369,6 +401,44 @@ namespace SystemWM.Views
                 ListaPortasAtivas.ItemsSource = _portasOriginais;
                 AtualizarPortasRelatorioLista();
             }
+        }
+
+        private List<PortaAtivaInfo> MesclarPortasLiberadas(List<PortaAtivaInfo> portas)
+        {
+            var resultado = portas?.ToList() ?? new List<PortaAtivaInfo>();
+
+            try
+            {
+                var regras = AppState.Firewall.ListarRegras();
+                foreach (var regra in regras.Where(r => r.Habilitada && (string.Equals(r.Acao, "Allow", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(r.Acao, "Permitir", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(r.Acao, "Allow", StringComparison.OrdinalIgnoreCase))))
+                {
+                    if (!int.TryParse(regra.Porta, out var porta))
+                        continue;
+
+                    var protocolo = string.Equals(regra.Protocolo, "UDP", StringComparison.OrdinalIgnoreCase) ? "UDP" : "TCP";
+                    if (resultado.Any(p => p.Protocolo.Equals(protocolo, StringComparison.OrdinalIgnoreCase) && p.Porta == porta))
+                        continue;
+
+                    resultado.Add(new PortaAtivaInfo
+                    {
+                        Protocolo = protocolo,
+                        LocalEndpoint = $"0.0.0.0:{porta}",
+                        RemoteEndpoint = "0.0.0.0:0",
+                        Estado = "Liberada",
+                        Processo = "Regra do Firewall",
+                        Pid = 0,
+                        Porta = porta
+                    });
+                }
+            }
+            catch
+            {
+                // Mantém a lista original caso não seja possível consultar as regras.
+            }
+
+            return resultado.OrderBy(p => p.Protocolo).ThenBy(p => p.Porta).ToList();
         }
 
         private void SincronizarPortasRelatorio(List<PortaAtivaInfo> portas)

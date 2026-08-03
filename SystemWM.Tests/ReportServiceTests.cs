@@ -190,4 +190,31 @@ public class ReportServiceTests
         Assert.Contains("CpuCard", AppState.DashboardCardsSelecionados);
         Assert.Contains("RamCard", AppState.DashboardCardsSelecionados);
     }
+
+    [Fact]
+    public void ParsearRegrasFirewall_DeveLerBlocoEmPortugues()
+    {
+        var service = new FirewallService();
+        const string output = """
+            ----------------------------------------------------------------------
+            Nome da Regra: Teste 3060
+            Habilitado: Sim
+            Direção: Entrada
+            Perfis: Domínio,Particular,Público
+            Ação: Permitir
+            Protocolo: TCP
+            Porta local: 3060
+            ----------------------------------------------------------------------
+            """;
+
+        var regras = service.ParsearRegrasFirewall(output);
+
+        var regra = Assert.Single(regras);
+        Assert.Equal("Teste 3060", regra.Nome);
+        Assert.Equal("Entrada", regra.Direcao);
+        Assert.True(regra.Habilitada);
+        Assert.Equal("Permitir", regra.Acao);
+        Assert.Equal("TCP", regra.Protocolo);
+        Assert.Equal("3060", regra.Porta);
+    }
 }

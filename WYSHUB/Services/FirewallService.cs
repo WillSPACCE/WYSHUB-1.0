@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using SystemWM.Models;
 
 namespace SystemWM.Services
@@ -55,8 +57,13 @@ namespace SystemWM.Services
         /// <summary>Lista as regras de firewall configuradas (entrada e saída).</summary>
         public List<FirewallRegra> ListarRegras()
         {
-            var regras = new List<FirewallRegra>();
             var (output, _, _) = ExecutarNetsh("advfirewall firewall show rule name=all");
+            return ParsearRegrasFirewall(output);
+        }
+
+        public List<FirewallRegra> ParsearRegrasFirewall(string output)
+        {
+            var regras = new List<FirewallRegra>();
 
             // O netsh retorna blocos de texto separados por "----------------------------------------------------------------------"
             var blocos = output.Split(new[] { "----------------------------------------------------------------------" },
@@ -64,25 +71,35 @@ namespace SystemWM.Services
 
             foreach (var bloco in blocos)
             {
-                if (!bloco.Contains("Rule Name:")) continue;
+                if (!ContemChaveRegra(bloco)) continue;
 
-                string Pega(string chave)
+                string Pega(params string[] chaves)
                 {
-                    var linha = bloco.Split('\n').FirstOrDefault(l => l.TrimStart().StartsWith(chave));
-                    if (linha == null) return "";
-                    var idx = linha.IndexOf(':');
-                    return idx >= 0 ? linha[(idx + 1)..].Trim() : "";
+                    foreach (var chave in chaves)
+                    {
+                        var linha = bloco.Split('\n').FirstOrDefault(l =>
+                            !string.IsNullOrWhiteSpace(l) &&
+                            NormalizarTexto(l).StartsWith(NormalizarTexto(chave), StringComparison.Ordinal));
+
+                        if (linha == null) continue;
+
+                        var idx = linha.IndexOf(':');
+                        return idx >= 0 ? linha[(idx + 1)..].Trim() : "";
+                    }
+
+                    return "";
                 }
 
                 var regra = new FirewallRegra
                 {
-                    Nome = Pega("Rule Name"),
-                    Direcao = Pega("Direction"),
-                    Habilitada = Pega("Enabled").Equals("Yes", StringComparison.OrdinalIgnoreCase),
-                    Perfil = Pega("Profiles"),
-                    Protocolo = Pega("Protocol"),
-                    Porta = Pega("LocalPort"),
-                    Acao = Pega("Action")
+                    Nome = Pega("Rule Name", "Nome da Regra"),
+                    Direcao = Pega("Direction", "Direção", "Direcao"),
+                    Habilitada = Pega("Enabled", "Habilitado").Equals("Yes", StringComparison.OrdinalIgnoreCase)
+                        || Pega("Enabled", "Habilitado").Equals("Sim", StringComparison.OrdinalIgnoreCase),
+                    Perfil = Pega("Profiles", "Perfis"),
+                    Protocolo = Pega("Protocol", "Protocolo"),
+                    Porta = Pega("LocalPort", "Porta local", "Porta Local"),
+                    Acao = Pega("Action", "Ação", "Acao")
                 };
 
                 if (!string.IsNullOrWhiteSpace(regra.Nome))
@@ -90,6 +107,34 @@ namespace SystemWM.Services
             }
 
             return regras;
+        }
+
+        private static bool ContemChaveRegra(string bloco)
+        {
+            var texto = NormalizarTexto(bloco);
+            return texto.Contains(NormalizarTexto("Rule Name"), StringComparison.Ordinal)
+                || texto.Contains(NormalizarTexto("Nome da Regra"), StringComparison.Ordinal);
+        }
+
+        private static string NormalizarTexto(string texto)
+        {
+            if (string.IsNullOrWhiteSpace(texto)) return string.Empty;
+
+            var sb = new StringBuilder();
+            var normalized = texto.Trim().Normalize(NormalizationForm.FormD);
+
+            foreach (var ch in normalized)
+            {
+                var category = CharUnicodeInfo.GetUnicodeCategory(ch);
+                if (category != UnicodeCategory.NonSpacingMark)
+                    sb.Append(ch);
+            }
+
+            return sb.ToString().Normalize(NormalizationForm.FormC)
+                .ToLowerInvariant()
+                .Replace(" ", string.Empty)
+                .Replace("_", string.Empty)
+                .Replace("-", string.Empty);
         }
 
         public bool HabilitarRegra(string nomeRegra, bool habilitar)
