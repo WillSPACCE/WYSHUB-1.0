@@ -1,0 +1,19 @@
+# Requisitos para rodar o WYSHUB em Windows Sandbox / máquina limpa
+# Observação: este projeto é uma aplicação WPF .NET e não depende de um ambiente Python.
+
+Windows 10/11 x64
+Microsoft .NET 8 Desktop Runtime x64 (necessário se a build não for self-contained)
+Microsoft Visual C++ Redistributable x64 (2015-2022) - recomendado
+PowerShell 5.1+ / Windows PowerShell
+Acesso de administrador (necessário para sensores, firewall e integração com o Windows)
+Serviço WMI ativo (Windows Management Instrumentation)
+Rede habilitada para conexão com a API de e-mail/Resend
+Firewall do Windows habilitado (o app usa netsh advfirewall)
+LibreHardwareMonitorLib (embutido via NuGet no projeto; não precisa instalação separada)
+System.Management (embutido via NuGet no projeto)
+System.Net.Http.Json (embutido via NuGet no projeto)
+
+Opcional / recomendado:
+- pasta do programa em um local estável, por exemplo C:\Program Files\WYSHUB
+- exclusão do Defender para a pasta do executável e para o processo WYSHUB.exe
+- assinatura do executável com certificado para reduzir bloqueios futuros

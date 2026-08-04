@@ -1,0 +1,156 @@
+<UserControl x:Class="SystemWM.Views.FirewallView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="FiltroDirecaoToggle" TargetType="ToggleButton">
+            <Setter Property="Foreground" Value="#E2E8F0"/>
+            <Setter Property="Background" Value="#111827"/>
+            <Setter Property="BorderBrush" Value="#334155"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Bd" CornerRadius="999" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#2563EB"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#60A5FA"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1D4ED8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Firewall" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextoPrimario}"/>
+                <TextBlock Text="Consulte o estado atual e configure portas rapidamente." Style="{StaticResource LabelSecundario}"/>
+                <TextBlock x:Name="TxtStatusFirewall" Text="Status: carregando..." Style="{StaticResource LabelSecundario}" Margin="0,8,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Button Content="⟳ Atualizar lista" Style="{StaticResource BotaoSecundario}" Click="BtnAtualizarPortas_Click" Width="150" Margin="0,0,8,0"/>
+            </StackPanel>
+        </Grid>
+
+        <Border Style="{StaticResource CardStyle}" Margin="0,0,0,14">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                    <Button x:Name="BtnVerEstado" Content="Ver estado" Style="{StaticResource BotaoPrimario}" Foreground="#F8FAFC" Click="BtnVerEstado_Click" Width="120" Margin="0,0,8,0"/>
+                    <Button x:Name="BtnAtivar" Content="Ativar" Style="{StaticResource BotaoPrimario}" Foreground="#F8FAFC" Click="BtnAtivar_Click" Width="120" Margin="0,0,8,0"/>
+                    <Button x:Name="BtnDesativar" Content="Desativar" Style="{StaticResource BotaoPrimario}" Foreground="#F8FAFC" Click="BtnDesativar_Click" Width="120" Margin="0,0,8,0"/>
+                    <Button Content="Remover regra por porta" Style="{StaticResource BotaoSecundario}" Foreground="#F8FAFC" Click="BtnRemoverRegraPorPorta_Click" Width="180"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,16" VerticalAlignment="Center">
+                    <TextBox x:Name="TxtPortaRapida" Width="100" Margin="0,0,8,0" ToolTip="Informe a porta" Foreground="{StaticResource TextoPrimario}" Background="{StaticResource BgCard}"/>
+                    <Border CornerRadius="999" Background="#111827" BorderBrush="#24314D" BorderThickness="1" Padding="4" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <ToggleButton x:Name="BtnFiltroSaida" Content="Saída" Width="90" Height="34" Margin="0,0,4,0" Style="{StaticResource FiltroDirecaoToggle}" Click="BtnFiltroDirecao_Click" Tag="Saída" IsChecked="True"/>
+                            <ToggleButton x:Name="BtnFiltroEntrada" Content="Entrada" Width="90" Height="34" Margin="0,0,4,0" Style="{StaticResource FiltroDirecaoToggle}" Click="BtnFiltroDirecao_Click" Tag="Entrada"/>
+                            <ToggleButton x:Name="BtnFiltroAmbos" Content="Ambos" Width="90" Height="34" Style="{StaticResource FiltroDirecaoToggle}" Click="BtnFiltroDirecao_Click" Tag="Ambos"/>
+                        </StackPanel>
+                    </Border>
+                    <ComboBox x:Name="CmbDirecao" Width="0" Height="0" Visibility="Collapsed" SelectedIndex="0">
+                        <ComboBoxItem Content="Saída"/>
+                        <ComboBoxItem Content="Entrada"/>
+                        <ComboBoxItem Content="Ambos"/>
+                    </ComboBox>
+                    <Button Content="Liberar porta" Style="{StaticResource BotaoPrimario}" Foreground="#F8FAFC" Click="BtnLiberarPortaRapida_Click" Width="140" Margin="0,0,8,0"/>
+                    <Button Content="Liberar executável" Style="{StaticResource BotaoSecundario}" Foreground="#F8FAFC" Click="BtnLiberarExecutavel_Click" Width="160"/>
+                </StackPanel>
+
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="Buscar porta/app/ip:" Foreground="{StaticResource TextoSecundario}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox x:Name="TxtBusca" Width="180" Margin="0,0,8,0" TextChanged="TxtBusca_TextChanged" ToolTip="Pesquisar por porta, IP ou nome do aplicativo" Foreground="{StaticResource TextoPrimario}" Background="{StaticResource BgCard}"/>
+                        <Button Content="Limpar" Style="{StaticResource BotaoSecundario}" Click="BtnLimparPesquisa_Click" Width="100"/>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Portas no relatório: " Foreground="{StaticResource TextoSecundario}" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="TxtContadorPortasRelatorio" Text="0" Foreground="#60A5FA" FontWeight="Bold"/>
+                </StackPanel>
+
+                <ListView x:Name="ListaPortasAtivas" SelectionMode="Extended" BorderThickness="0" Background="Transparent" Height="340" Margin="0,0,0,12" MouseDoubleClick="ListaPortasAtivas_MouseDoubleClick" PreviewMouseRightButtonDown="ListaPortasAtivas_PreviewMouseRightButtonDown">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Foreground" Value="{StaticResource TextoPrimario}"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IncluirNoRelatorio}" Value="True">
+                                    <Setter Property="Background" Value="#1F2D4B"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Porta" Width="90" DisplayMemberBinding="{Binding Porta}"/>
+                            <GridViewColumn Header="Conexão" Width="260" DisplayMemberBinding="{Binding LocalEndpoint}"/>
+                            <GridViewColumn Header="Protocolo" Width="90" DisplayMemberBinding="{Binding Protocolo}"/>
+                            <GridViewColumn Header="Estado" Width="110" DisplayMemberBinding="{Binding Estado}"/>
+                            <GridViewColumn Header="Processo" Width="220" DisplayMemberBinding="{Binding Processo}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                    <Button Content="Salvar selecionadas no relatório" Style="{StaticResource BotaoPrimario}" Foreground="#F8FAFC" Click="BtnSalvarSelecionadasParaRelatorio_Click" Width="220" Margin="0,0,8,0"/>
+                    <Button Content="Ver portas do relatório" Style="{StaticResource BotaoPrimario}" Foreground="#F8FAFC" Width="180" Click="BtnVerPortasRelatorio_Click"/>
+                </StackPanel>
+
+                <Border Background="#0F172A" BorderBrush="#24314D" BorderThickness="1" CornerRadius="10" Margin="0,0,0,12" Padding="12">
+                    <StackPanel>
+                        <TextBlock x:Name="TxtPortasRelatorioTitulo" Text="Portas salvas no relatório (0)" Foreground="{StaticResource TextoPrimario}" FontWeight="Bold" Margin="0,0,0,8"/>
+                        <Border Background="#111827" BorderBrush="#2F3B59" BorderThickness="1" CornerRadius="8" Padding="8" MaxHeight="140">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsControl x:Name="ListaPortasRelatorio" MinHeight="50">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Foreground="{StaticResource TextoPrimario}" TextWrapping="Wrap" Margin="0,0,0,4">
+                                                <Run Text="Porta "/>
+                                                <Run Text="{Binding Porta}"/>
+                                                <Run Text=" | "/>
+                                                <Run Text="{Binding LocalEndpoint}"/>
+                                                <Run Text=" | "/>
+                                                <Run Text="{Binding Processo}"/>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Border>
+                        <Button Content="Limpar portas salvas" Style="{StaticResource BotaoSecundario}" Foreground="#F8FAFC" Click="BtnLimparPortasRelatorio_Click" Width="160" Margin="0,12,0,0" HorizontalAlignment="Left"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <Button Content="Liberar selecionada" Style="{StaticResource BotaoPrimario}" Foreground="#F8FAFC" Click="BtnPermitirPortaSelecionada_Click" Width="150" Margin="0,0,8,0"/>
+                    <Button Content="Bloquear selecionada" Style="{StaticResource BotaoSecundario}" Foreground="#F8FAFC" Click="BtnBloquearPortaSelecionada_Click" Width="150" Margin="0,0,8,0"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+    </DockPanel>
+</UserControl>

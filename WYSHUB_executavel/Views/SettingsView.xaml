@@ -1,0 +1,117 @@
+<UserControl x:Class="SystemWM.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:SystemWM.Views">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="0,0,0,24">
+            <StackPanel Margin="0,0,0,20">
+                <TextBlock Text="E-mail" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextoPrimario}"/>
+                <TextBlock Text="Monte o e-mail rapidamente, carregue um laudo salvo e teste o envio sem sair da tela." Style="{StaticResource LabelSecundario}"/>
+            </StackPanel>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,0,14">
+                        <StackPanel>
+                            <TextBlock Text="Composição do e-mail" Style="{StaticResource TituloCard}" Margin="0,0,0,10"/>
+                            <TextBlock Text="Campos principais para envio rápido e profissional." Style="{StaticResource LabelSecundario}" Margin="0,0,0,10"/>
+
+                            <TextBlock Text="Assunto do e-mail" Style="{StaticResource LabelSecundario}"/>
+                            <TextBox x:Name="TxtAssuntoEmail" Margin="0,4,0,10"/>
+
+                            <TextBlock Text="E-mail de quem vai receber" Style="{StaticResource LabelSecundario}"/>
+                            <TextBox x:Name="TxtDestinoPadrao" Margin="0,4,0,10"/>
+
+                            <TextBlock Text="Cópia (opcional)" Style="{StaticResource LabelSecundario}"/>
+                            <TextBox x:Name="TxtCopiaEmail" Margin="0,4,0,10"/>
+
+                            <TextBlock Text="Remetente" Style="{StaticResource LabelSecundario}"/>
+                            <TextBox x:Name="TxtRemetente" Margin="0,4,0,10"/>
+
+                            <TextBlock Text="Nome do técnico responsável" Style="{StaticResource LabelSecundario}"/>
+                            <TextBox x:Name="TxtNomeTecnico" Margin="0,4,0,10"/>
+
+                            <TextBlock Text="Anexar relatório" Style="{StaticResource LabelSecundario}" Margin="0,0,0,6"/>
+                            <StackPanel Margin="0,0,0,12">
+                                <CheckBox x:Name="ChkAnexarTxt" Content="Enviar relatório em TXT" IsChecked="True" Foreground="{StaticResource TextoPrimario}" Margin="0,0,0,6"/>
+                                <CheckBox x:Name="ChkAnexarHtml" Content="Enviar relatório em HTML" Foreground="{StaticResource TextoPrimario}" Margin="0,0,0,6"/>
+                                <!-- PDF removed -->
+                            </StackPanel>
+
+                            <TextBlock Text="Observações / informações adicionais" Style="{StaticResource LabelSecundario}"/>
+                            <TextBox x:Name="TxtCorpoEmail" Margin="0,4,0,10" Height="140" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="1">
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,0,14">
+                        <StackPanel>
+                            <TextBlock Text="Últimos laudos salvos" Style="{StaticResource TituloCard}" Margin="0,0,0,10" Foreground="#E5F1FF"/>
+                            <TextBlock Text="Selecione um laudo para carregar o conteúdo no corpo do e-mail." Style="{StaticResource LabelSecundario}" Margin="0,0,0,10" Foreground="#B8D4FF"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10" VerticalAlignment="Center">
+                                <TextBlock Text="Filtrar por data:" Style="{StaticResource LabelSecundario}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <DatePicker x:Name="DatePickerFiltroRelatorio" Width="150" SelectedDateChanged="DatePickerFiltroRelatorio_SelectedDateChanged"/>
+                                <Button x:Name="BtnLimparFiltroRelatorio" Content="Limpar" Style="{StaticResource BotaoPrimario}" Height="28" Margin="8,0,0,0" Click="BtnLimparFiltroRelatorio_Click"/>
+                            </StackPanel>
+                            <ListBox x:Name="ListaLaudosSalvos" Height="220" Margin="0,4,0,10" Background="#0B1A3F" BorderBrush="#0F2A5F" BorderThickness="1" SelectionChanged="ListaLaudosSalvos_SelectionChanged" PreviewMouseRightButtonDown="ListaLaudosSalvos_PreviewMouseRightButtonDown">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="Padding" Value="8,6"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderThickness" Value="1"/>
+                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                        <Setter Property="Foreground" Value="#E5F1FF"/>
+                                        <Setter Property="ContextMenu">
+                                            <Setter.Value>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Abrir arquivo"
+                                                              Command="{x:Static local:SettingsView.AbrirArquivoCommand}"
+                                                              CommandParameter="{Binding}" />
+                                                    <MenuItem Header="Abrir pasta"
+                                                              Command="{x:Static local:SettingsView.AbrirPastaCommand}"
+                                                              CommandParameter="{Binding}" />
+                                                </ContextMenu>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="#0F7A2F"/>
+                                                <Setter Property="BorderBrush" Value="#76D28F"/>
+                                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#14406B"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Button x:Name="BtnCarregarRelatorioSalvo" Content="Carregar" Style="{StaticResource BotaoSecundario}" Height="34" MinWidth="92" FontSize="13" FontWeight="Bold" Margin="0,0,8,0" Click="BtnCarregarRelatorioSalvo_Click"/>
+                                <Button x:Name="BtnAbrirPastaRelatorios" Content="Abrir pasta" Style="{StaticResource BotaoSecundario}" Height="34" MinWidth="104" FontSize="13" FontWeight="Bold" Margin="0,0,8,0" Click="BtnAbrirPastaRelatorios_Click"/>
+                                <Button x:Name="BtnLimparRelatorio" Content="Limpar" Style="{StaticResource BotaoSecundario}" Height="34" MinWidth="78" FontSize="13" FontWeight="Bold" Click="BtnLimparRelatorio_Click"/>
+                            </StackPanel>
+                            <TextBlock x:Name="TxtRelatorioSelecionado" Style="{StaticResource LabelSecundario}" Text="Nenhum relatório carregado." TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                <Button x:Name="BtnSalvar" Content="Salvar config" Style="{StaticResource BotaoPrimario}" Margin="0,0,10,0" Click="BtnSalvar_Click"/>
+                <Button x:Name="BtnLimparCampos" Content="Limpar campos" Style="{StaticResource BotaoPrimario}" Margin="0,0,10,0" Click="BtnLimparCampos_Click"/>
+                <Button x:Name="BtnTestarEnvio" Content="Enviar e-mail" Style="{StaticResource BotaoEnviarEmail}" Click="BtnTestarEnvio_Click"/>
+            </StackPanel>
+            <TextBlock x:Name="TxtStatus" Style="{StaticResource LabelSecundario}" Margin="0,10,0,0" TextWrapping="Wrap"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
