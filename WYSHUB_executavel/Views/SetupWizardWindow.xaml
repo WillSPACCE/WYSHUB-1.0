@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Assistente de instalação do WYSHUB"
-        Height="420" Width="720"
+        Height="520" Width="760"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
     <Grid Margin="24">
@@ -16,7 +16,7 @@
 
         <TextBlock Grid.Row="0" Text="Preparar o ambiente antes de abrir o programa" FontSize="24" FontWeight="Bold" Margin="0,0,0,12"/>
 
-        <TextBlock Grid.Row="1" Text="Este assistente prepara o Windows para rodar o WYSHUB: instala componentes básicos, habilita o WMI e adiciona exclusões ao Defender para a pasta do programa." TextWrapping="Wrap" Margin="0,0,0,16"/>
+        <TextBlock Grid.Row="1" Text="Este assistente verifica o arquivo de requisitos do projeto, confirma itens já instalados e só baixa/instala o que falta, um passo por vez." TextWrapping="Wrap" Margin="0,0,0,16"/>
 
         <Border Grid.Row="2" Background="#F5F7FA" Padding="12" CornerRadius="8" Margin="0,0,0,16">
             <StackPanel>
@@ -26,13 +26,13 @@
             </StackPanel>
         </Border>
 
-        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
-            <TextBlock x:Name="TxtLog" Text="• .NET 8 Desktop Runtime (opcional, se não for self-contained)&#x0a;• Visual C++ Redistributable 2015-2022&#x0a;• serviço WMI&#x0a;• exclusões do Defender para a pasta do programa" TextWrapping="Wrap"/>
-        </ScrollViewer>
+        <Border Grid.Row="3" Background="#FAFBFE" BorderBrush="#D9E1F2" BorderThickness="1" CornerRadius="8" Padding="10">
+            <ListBox x:Name="LstRequisitos" Background="Transparent" BorderThickness="0" FontSize="13"/>
+        </Border>
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
             <Button x:Name="BtnElevate" Content="Reabrir como administrador" Width="180" Height="34" Margin="0,0,8,0" Click="BtnElevate_Click"/>
-            <Button x:Name="BtnInstalar" Content="Instalar tudo" Width="120" Height="34" Margin="0,0,8,0" Click="BtnInstalar_Click"/>
+            <Button x:Name="BtnInstalar" Content="Verificar e instalar" Width="150" Height="34" Margin="0,0,8,0" Click="BtnInstalar_Click"/>
             <Button x:Name="BtnPular" Content="Pular" Width="100" Height="34" Click="BtnPular_Click"/>
         </StackPanel>
     </Grid>

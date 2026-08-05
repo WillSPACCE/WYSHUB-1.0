@@ -7,44 +7,48 @@
             <TextBlock Text="Apenas a API do Resend fica disponível aqui." Style="{StaticResource LabelSecundario}"/>
         </StackPanel>
 
-        <StackPanel MaxWidth="600" HorizontalAlignment="Left">
-            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,14">
-                <StackPanel>
-                    <TextBlock Text="API do Resend" Style="{StaticResource TituloCard}" Margin="0,0,0,10"/>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel MaxWidth="600" HorizontalAlignment="Left">
+                <Border Margin="0,0,0,14" Padding="16" CornerRadius="12" Background="#14213D" BorderBrush="#4F8CFF" BorderThickness="1.2">
+                    <StackPanel>
+                        <TextBlock Text="Assistente de instalação" Style="{StaticResource TituloCard}" Margin="0,0,0,8" Foreground="#8EC5FF"/>
+                        <TextBlock Text="Acesso ao assistente de setup dentro do programa, sem bloquear a abertura da aplicação." Style="{StaticResource LabelSecundario}" Margin="0,0,0,14" TextWrapping="Wrap"/>
+                        <Button x:Name="BtnAbrirAssistenteInstalacao" Content="▶ Abrir assistente de instalação" Width="280" Height="38" HorizontalAlignment="Left" Click="BtnAbrirAssistenteInstalacao_Click" Background="#3B82F6" Foreground="White" FontWeight="Bold" BorderBrush="#1D4ED8" BorderThickness="1"/>
+                    </StackPanel>
+                </Border>
 
-                    <TextBlock Text="API Key do Resend" Style="{StaticResource LabelSecundario}"/>
-                    <PasswordBox x:Name="TxtApiKey" Margin="0,4,0,10"/>
-                    <TextBox x:Name="TxtApiKeyVisivel" Margin="0,4,0,10" Visibility="Collapsed" IsReadOnly="True" Background="#0B0F1A" Foreground="White" BorderBrush="#5B8DEF" BorderThickness="1"/>
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="API do Resend" Style="{StaticResource TituloCard}" Margin="0,0,0,10"/>
 
-                    <Border x:Name="SenhaApiContainer" Margin="0,0,0,10" Padding="10" Visibility="Collapsed" Background="#0B0F1A" BorderBrush="#5B8DEF" BorderThickness="1" CornerRadius="8">
-                        <StackPanel>
-                            <TextBlock Text="Senha" Foreground="#8EA0C9" Margin="0,0,0,6"/>
-                            <PasswordBox x:Name="TxtSenhaApi" Height="32" Margin="0,0,0,8" Background="#0B0F1A" Foreground="White" BorderBrush="#5B8DEF" BorderThickness="1"/>
-                            <TextBlock x:Name="TxtSenhaApiErro" Text="Senha incorreta." Foreground="#FF7878" Margin="0,0,0,8" Visibility="Collapsed"/>
-                            <Button x:Name="BtnConfirmarSenhaApi" Content="Confirmar" Width="110" Height="32" HorizontalAlignment="Right" Background="#3DDC84" Foreground="White" BorderBrush="#1A8853" BorderThickness="1" Click="BtnConfirmarSenhaApi_Click"/>
-                        </StackPanel>
-                    </Border>
+                        <TextBlock Text="API Key do Resend" Style="{StaticResource LabelSecundario}"/>
+                        <PasswordBox x:Name="TxtApiKey" Margin="0,4,0,10"/>
+                        <TextBox x:Name="TxtApiKeyVisivel" Margin="0,4,0,10" Visibility="Collapsed" IsReadOnly="True" Background="#0B0F1A" Foreground="White" BorderBrush="#5B8DEF" BorderThickness="1"/>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                        <Border x:Name="StatusApiBadge" CornerRadius="12" Padding="8,4" Background="LightCoral" Margin="0,0,10,0">
-                            <TextBlock x:Name="TxtStatusApi" Text="Sem validação" Foreground="White" FontWeight="Bold" FontSize="12"/>
+                        <Border x:Name="SenhaApiContainer" Margin="0,0,0,10" Padding="10" Visibility="Collapsed" Background="#0B0F1A" BorderBrush="#5B8DEF" BorderThickness="1" CornerRadius="8">
+                            <StackPanel>
+                                <TextBlock Text="Senha" Foreground="#8EA0C9" Margin="0,0,0,6"/>
+                                <PasswordBox x:Name="TxtSenhaApi" Height="32" Margin="0,0,0,8" Background="#0B0F1A" Foreground="White" BorderBrush="#5B8DEF" BorderThickness="1"/>
+                                <TextBlock x:Name="TxtSenhaApiErro" Text="Senha incorreta." Foreground="#FF7878" Margin="0,0,0,8" Visibility="Collapsed"/>
+                                <Button x:Name="BtnConfirmarSenhaApi" Content="Confirmar" Width="110" Height="32" HorizontalAlignment="Right" Background="#3DDC84" Foreground="White" BorderBrush="#1A8853" BorderThickness="1" Click="BtnConfirmarSenhaApi_Click"/>
+                            </StackPanel>
                         </Border>
-                        <TextBlock x:Name="TxtStatus" Style="{StaticResource LabelSecundario}" VerticalAlignment="Center"/>
-                    </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                        <Button x:Name="BtnMostrarApi" Content="👁️ Mostrar API" Style="{StaticResource BotaoPrimario}" Margin="0,0,10,0" Click="BtnMostrarApi_Click"/>
-                        <Button x:Name="BtnSalvarApiArquivo" Content="💾 Salvar API" Style="{StaticResource BotaoPrimario}" Margin="0,0,10,0" Click="BtnSalvarApiArquivo_Click"/>
-                        <Button x:Name="BtnSalvarConfig" Content="💾 Salvar" Style="{StaticResource BotaoPrimario}" Margin="0,0,10,0" Click="BtnSalvarConfig_Click"/>
-                        <Button x:Name="BtnTestarApi" Content="🧪 Testar API" Background="#2ecc71" Foreground="White" FontWeight="Bold" Padding="12,6" Click="BtnTestarApi_Click"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Border x:Name="StatusApiBadge" CornerRadius="12" Padding="8,4" Background="LightCoral" Margin="0,0,10,0">
+                                <TextBlock x:Name="TxtStatusApi" Text="Sem validação" Foreground="White" FontWeight="Bold" FontSize="12"/>
+                            </Border>
+                            <TextBlock x:Name="TxtStatus" Style="{StaticResource LabelSecundario}" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <Button x:Name="BtnMostrarApi" Content="👁️ Mostrar API" Style="{StaticResource BotaoPrimario}" Margin="0,0,10,0" Click="BtnMostrarApi_Click"/>
+                            <Button x:Name="BtnSalvarApiArquivo" Content="💾 Salvar API" Style="{StaticResource BotaoPrimario}" Margin="0,0,10,0" Click="BtnSalvarApiArquivo_Click"/>
+                            <Button x:Name="BtnSalvarConfig" Content="💾 Salvar" Style="{StaticResource BotaoPrimario}" Margin="0,0,10,0" Click="BtnSalvarConfig_Click"/>
+                            <Button x:Name="BtnTestarApi" Content="🧪 Testar API" Background="#2ecc71" Foreground="White" FontWeight="Bold" Padding="12,6" Click="BtnTestarApi_Click"/>
+                        </StackPanel>
                     </StackPanel>
-                    <StackPanel Margin="0,14,0,0">
-                        <TextBlock Text="Assistente de instalação" Style="{StaticResource TituloCard}" Margin="0,0,0,8"/>
-                        <TextBlock Text="Acesso ao assistente de setup dentro do programa, sem bloquear a abertura da aplicação." Style="{StaticResource LabelSecundario}" Margin="0,0,0,10" TextWrapping="Wrap"/>
-                        <Button x:Name="BtnAbrirAssistenteInstalacao" Content="▶ Abrir assistente de instalação" Style="{StaticResource BotaoSecundario}" Width="260" Height="34" HorizontalAlignment="Left" Click="BtnAbrirAssistenteInstalacao_Click"/>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
+                </Border>
 
             <Border Style="{StaticResource CardStyle}" Margin="0,0,0,14">
                 <StackPanel>
@@ -70,6 +74,7 @@
                     <Button x:Name="BtnRestaurarBackup" Content="Restaurar backup" Style="{StaticResource BotaoSecundario}" Margin="0,10,0,0" Click="BtnRestaurarBackup_Click"/>
                 </StackPanel>
             </Border>
-        </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
     </DockPanel>
 </UserControl>
